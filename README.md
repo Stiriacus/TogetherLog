@@ -1,104 +1,194 @@
 # TogetherLog
 
-TogetherLog is a modern, elegant platform for couples and close groups to document shared memories as an interactive online flipbook.  
-Upload photos, add highlights, assign tags, set locations, and TogetherLog automatically generates beautiful "Smart Pages" that feel like a digital scrapbook.
+TogetherLog is a modern, elegant platform for couples and close groups to document shared memories as an interactive online flipbook.
+
+Built with Flutter (Web + Android) on the frontend and Supabase (PostgreSQL, Auth, Storage, Edge Functions) on the backend, TogetherLog aims to be open-source-friendly and eventually self-hostable while starting with a pragmatic managed setup.
 
 ---
 
-## 🚀 Features (Version 1)
+## ✨ Features (Version 1 – MVP)
 
-- Create personal or shared memory logs  
-- Upload photos (single or multiple)  
-- Automatic extraction of EXIF data (date, GPS)  
-- Reverse geocoding to detect location (editable by user)  
-- Tag system with predefined categories  
-- Highlight text per entry  
-- Smart Pages (rule-based layout + color selection)  
-- Flipbook viewer with page-turn animation  
-- Emotion-inspired color themes  
-- Data structure prepared for advanced layouts and decorations  
+Platforms
+• Flutter Web
+• Flutter Android
+
+Accounts & Auth
+• Email + password
+• Google OAuth via Supabase Auth
+
+Logs (Memory Books)
+• Multiple logs per user
+• Each log is a chronological digital flipbook
+
+Entries (Memories)
+• Upload 1–N photos
+• EXIF date extraction
+• EXIF GPS + reverse geocoding via OpenStreetMap/Nominatim
+• Editable/overrideable location
+• Tag system with predefined categories
+• Short highlight text
+
+Smart Pages (Backend-Driven)
+• Fully deterministic, rule-based engine
+• Backend selects:
+– page layout type
+– color theme (Emotion-Color-Engine V1)
+• Flutter client only renders the given layout
+
+Flipbook Viewer
+• Simple 3D-like page-turn animation
+• Each entry displayed as a two-page spread
+• Works well on Web + Android
+
+Processing Pipeline
+• Async worker via Supabase Edge Functions
+• Handles:
+– EXIF extraction
+– thumbnail generation
+– dominant color computation
+– Smart Page evaluation
+• Online-only (no offline mode in V1)
 
 ---
 
-## 🔧 Planned (Future Versions)
+## 🔭 Future Features (Planned for V2+)
 
-- Map view using OpenStreetMap  
-- Story slideshow mode  
-- Decorative elements (sprinkles, polaroid frames, collage modes)  
-- Heatmaps & analytics  
-- Widget integration  
-- Optional AI assistance for tagging, layout selection, and highlight suggestions  
-- Gamification toggle for groups that enjoy progress tracking  
+See docs/v2optional.md for details.
+Highlights:
 
-See the full optional feature archive in:  
-**`v2optional.md`**
+• Map view (OpenStreetMap-based)
+• Story slideshow
+• Sprinkles (decorative icons), polaroid & collage layouts
+• Optional AI assistance (tagging, layout suggestions)
+• Relationship/group progress (opt-in)
+• Heatmaps of visited places
+• Mobile widgets for random memories
 
 ---
 
-## 📂 Project Structure (recommended)
+## 🧱 Project Structure (Monorepo)
 
-/backend
+/app
+/lib
+/features
+/auth
+/logs
+/entries
+/flipbook
+/core
+/theme
+/routing
+/widgets
+/data
 /api
 /models
-/services
-/storage
+pubspec.yaml
 
-/frontend
-/src
-/components
-/pages
-/hooks
-/styles
+/backend
+/edge-functions
+/api # REST endpoints (Supabase Edge Functions)
+/workers # async workers (EXIF, thumbnails, colors)
+/sql
+/migrations # PostgreSQL migrations (Supabase)
+README.md
 
 /docs
 v1Spez.md
 v2optional.md
+architecture.md
 
+/.github
+/workflows
+ci.yml
 
----
-
-## 🛠 Technology Recommendations
-
-**Frontend**  
-- React or SvelteKit  
-- TailwindCSS  
-- Flipbook animation library or custom canvas-based animation  
-
-**Backend**  
-- Node.js (Express / Fastify) or Python (Django / FastAPI)  
-- PostgreSQL for relational data  
-- S3-compatible storage (MinIO, local S3, etc.)  
-
-**Infrastructure**  
-- Docker & Docker Compose  
-- Reverse proxy (NGINX)  
-- Optional: CDN for images
+LICENSE
+README.md
 
 ---
 
-## 📝 Documentation
+## 🛠 Tech Stack
 
-Core specifications:  
-- **`v1Spez.md`** – MVP specification  
-- **`v2optional.md`** – Optional and future features  
+Frontend (Flutter)
+• Flutter Web + Flutter Android
+• go_router for navigation
+• flutter_riverpod for state management
+• dio or http for REST communication
+• Simple 3D page-turn animation package
+• Light theme only for now; dynamic per-page theming driven by Smart Pages
+
+Backend (Supabase)
+• Supabase PostgreSQL
+• Supabase Auth (email/password + Google)
+• Supabase Storage (EU region) for photos + thumbnails
+• Supabase Edge Functions (TypeScript/Deno) for:
+– REST API
+– async workers
+– Smart Page computation
+
+Geocoding
+• OpenStreetMap / Nominatim
+• Public Nominatim with backend caching
+
+---
+
+## 🚀 Deployment
+
+V1 deployment is manual:
+
+Frontend
+• Flutter Web: manual build + upload to static host
+• Android: manual APK/AAB build
+
+Backend
+• Supabase project hosts the backend
+• Migrations + Edge Functions deployed via Supabase CLI
+
+Automatic CI/CD can be added later using GitHub Actions.
+
+---
+
+## 📚 Documentation
+
+docs/v1Spez.md – MVP technical specification
+docs/v2optional.md – optional features
+docs/architecture.md – architectural overview
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, feature suggestions, and pull requests are welcome.  
-This project aims to be open-source friendly and modular.
+TogetherLog is intended to be open-source-friendly.
+
+Repository will include:
+• MIT license
+• Contribution guidelines
+• Issue + PR templates
+• Clear folder structure
+
+Contributions welcome for:
+• UI/UX (Flutter)
+• Smart Page layout ideas
+• Supabase backend enhancements
+• Documentation
 
 ---
 
 ## 📄 License
 
-Choose any OSI-approved license you prefer (MIT recommended).
+MIT.
+Ensure LICENSE file is present before making the repo public.
 
 ---
 
-## ❤️ About
+## ❤️ Goal
 
-TogetherLog is designed to help people preserve moments that matter — elegantly, privately, and beautifully.
+TogetherLog aims to make shared memories:
 
+• Beautiful to look at
+• Simple to capture
+• Respectful of privacy
+• Easy to self-host
 
+While staying lightweight, clean, and architecturally maintainable.
+
+---
