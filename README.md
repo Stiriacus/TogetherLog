@@ -37,3 +37,68 @@ See the full optional feature archive in:
 
 ## 📂 Project Structure (recommended)
 
+/backend
+/api
+/models
+/services
+/storage
+
+/frontend
+/src
+/components
+/pages
+/hooks
+/styles
+
+/docs
+v1Spez.md
+v2optional.md
+
+
+---
+
+## 🛠 Technology Recommendations
+
+**Frontend**  
+- React or SvelteKit  
+- TailwindCSS  
+- Flipbook animation library or custom canvas-based animation  
+
+**Backend**  
+- Node.js (Express / Fastify) or Python (Django / FastAPI)  
+- PostgreSQL for relational data  
+- S3-compatible storage (MinIO, local S3, etc.)  
+
+**Infrastructure**  
+- Docker & Docker Compose  
+- Reverse proxy (NGINX)  
+- Optional: CDN for images
+
+---
+
+## 📝 Documentation
+
+Core specifications:  
+- **`v1Spez.md`** – MVP specification  
+- **`v2optional.md`** – Optional and future features  
+
+---
+
+## 🤝 Contributing
+
+Contributions, feature suggestions, and pull requests are welcome.  
+This project aims to be open-source friendly and modular.
+
+---
+
+## 📄 License
+
+Choose any OSI-approved license you prefer (MIT recommended).
+
+---
+
+## ❤️ About
+
+TogetherLog is designed to help people preserve moments that matter — elegantly, privately, and beautifully.
+
+
