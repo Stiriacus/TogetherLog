@@ -8,10 +8,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Frontend**: Flutter (Web + Android)
 - **Backend**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
-- **Current Status**: 8/12 milestones completed (66.7%)
-  - Backend fully operational
-  - Auth flow complete
-  - Ready for Logs/Entries/Flipbook UI implementation
 
 ## Essential Reading
 
@@ -60,36 +56,6 @@ Before any commit, verify:
 - Architecture compliance against `docs/architecture.md`
 - All code paths tested
 - Backend authoritative principle maintained
-
-## Common Development Commands
-
-### Flutter App
-
-```bash
-# Navigate to app directory
-cd app
-
-# Get dependencies
-flutter pub get
-
-# Run on web (development because chrome is not installed -> use brave with this command)
-CHROME_EXECUTABLE=$(which brave-browser || which brave) flutter run -d chrome
-
-# Run on Android device
-flutter devices  # List available devices
-flutter run -d <device-id>
-
-# Build for production
-flutter build web --release
-flutter build apk --release
-flutter build appbundle --release
-
-# Clean build cache
-flutter clean && flutter pub get
-
-# Run code generation (Riverpod)
-dart run build_runner build --delete-conflicting-outputs
-```
 
 ### Platform Testing Constraints (MANDATORY)
 
@@ -156,6 +122,35 @@ All new Flutter code, UI components, widgets, themes, and styles MUST use withVa
 This rule is mandatory for consistency across the entire Flutter codebase.
 
 
+### Common Development Commands
+
+### Flutter App
+
+```bash
+# Navigate to app directory
+cd app
+
+# Get dependencies
+flutter pub get
+
+# Run on web (development because chrome is not installed -> use brave with this command)
+CHROME_EXECUTABLE=$(which brave-browser || which brave) flutter run -d chrome
+
+# Build for production
+flutter build web --release
+flutter build apk --release
+flutter build appbundle --release
+
+# Clean build cache
+flutter clean && flutter pub get
+
+# Run code generation (Riverpod)
+dart run build_runner build --delete-conflicting-outputs
+```
+
+
+
+
 ### Backend (Supabase)
 
 ```bash
@@ -199,10 +194,6 @@ Detailed description:
 - Architecture compliance
 - Backtest results
 
-Files:
-- file1.dart (XX lines)
-- file2.dart (XX lines)"
-
 # Push to branch
 git push origin claude/implement-togetherlog-milestones-01VZCHt2jn2mHfHykS74GcA3
 ```
@@ -223,7 +214,7 @@ backend/supabase/
 │   ├── reverse-geocode/        # GPS → location worker
 │   ├── process-photo/          # EXIF extraction worker
 │   ├── compute-colors/         # Color analysis worker
-│   └── compute-smart-page/     # Smart Pages Engine (241 lines)
+│   └── compute-smart-page/     # Smart Pages Engine
 └── migrations/
     ├── 001_initial_schema.sql          # Core tables + RLS
     └── 002_helper_views_and_functions.sql  # Optimized views
@@ -237,18 +228,21 @@ app/lib/
 │   ├── routing/
 │   │   └── router.dart         # go_router with auth guards
 │   └── theme/
-│       └── smart_page_theme.dart  # Color theme mappings (to be created)
+│       └── smart_page_theme.dart  # Color theme mappings
 ├── data/
 │   ├── api/
-│   │   └── supabase_client.dart    # Supabase initialization
+│   │   ├── supabase_client.dart    # Supabase initialization
+│   │   ├── logs_api_client.dart    # Logs REST API client
+│   │   ├── entries_api_client.dart # Entries REST API client
+│   │   └── storage_api_client.dart # Supabase Storage client
 │   └── models/
 │       ├── user.dart               # User model
-│       ├── log.dart                # Log model (to be expanded)
-│       ├── entry.dart              # Entry model (to be created)
-│       ├── photo.dart              # Photo model (to be created)
-│       └── tag.dart                # Tag model (to be created)
+│       ├── log.dart                # Log model
+│       ├── entry.dart              # Entry model
+│       ├── photo.dart              # Photo model
+│       └── tag.dart                # Tag model
 └── features/
-    ├── auth/                   #   COMPLETED (MILESTONE 8)
+    ├── auth/                   # COMPLETED (MILESTONE 8)
     │   ├── data/
     │   │   └── auth_repository.dart
     │   ├── providers/
@@ -256,12 +250,29 @@ app/lib/
     │   └── widgets/
     │       ├── login_form.dart
     │       └── signup_form.dart
-    ├── logs/                   
-    │   └── logs_screen.dart    # Placeholder, needs implementation
-    ├── entries/                
-    │   └── entry_create_screen.dart  # Placeholder
-    └── flipbook/               
-        └── flipbook_viewer.dart      # Placeholder
+    ├── logs/                   # COMPLETED (MILESTONE 9)
+    │   ├── data/
+    │   │   └── logs_repository.dart
+    │   ├── providers/
+    │   │   └── logs_providers.dart
+    │   └── widgets/
+    │       └── logs_screen.dart
+    ├── entries/                # COMPLETED (MILESTONE 10)
+    │   ├── data/
+    │   │   └── entries_repository.dart
+    │   ├── providers/
+    │   │   └── entries_providers.dart
+    │   └── widgets/
+    │       ├── entries_list_screen.dart
+    │       ├── entry_detail_screen.dart
+    │       ├── entry_create_screen.dart
+    │       └── entry_edit_screen.dart
+    └── flipbook/               # COMPLETED (MILESTONE 11)
+        ├── providers/
+        │   └── flipbook_providers.dart
+        └── widgets/
+            ├── flipbook_viewer.dart
+            └── smart_page_renderer.dart
 ```
 
 ## Database Schema Overview
@@ -290,7 +301,7 @@ All tables have RLS policies enforcing:
 
 ## Smart Pages Engine
 
-**Location**: `backend/supabase/functions/compute-smart-page/index.ts` (241 lines)
+**Location**: `backend/supabase/functions/compute-smart-page/index.ts`
 
 The Smart Pages Engine is the heart of TogetherLog. It runs **entirely on the backend** and applies three deterministic rule engines:
 
@@ -368,18 +379,22 @@ READ → ANALYZE → PLAN → CODE → BACKTEST → FIX → COMMIT → PUSH → 
 
 ### Testing Strategy
 
-Manual testing for V1:
-- Test auth flow: signup → login → logout
-- Test CRUD operations for logs and entries
-- Verify RLS policies (User A cannot access User B's data)
-- Test photo upload to Supabase Storage
-- Verify Smart Page computation triggers
-- Test flipbook page-turn animation smoothness
+**All testing is manual** for V1 (no automated UI tests).
+
+See `docs/testing-guide.md` for comprehensive testing procedures:
+- Auth flow: signup → login → logout
+- CRUD operations for logs and entries
+- RLS policies verification (multi-user isolation)
+- Photo upload to Supabase Storage
+- Smart Page computation validation
+- Flipbook page-turn animation performance
+- API endpoint testing with curl
+- Database verification with SQL queries
 
 ## Technology Stack
 
 ### Frontend
-- **Flutter 3.32.5** - UI framework (Web + Android)
+- **Flutter 3.32.5** - UI framework (Web)
 - **Riverpod 2.4.0** - State management (`flutter_riverpod`, `riverpod_annotation`)
 - **go_router 13.0.0** - Declarative routing with auth guards
 - **dio 5.4.0** - HTTP client for REST API calls
@@ -444,6 +459,7 @@ Manual testing for V1:
 - `docs/v1Spez.md` - Product specification (source of truth for features)
 - `docs/architecture.md` - Technical architecture
 - `docs/MILESTONES.md` - Development roadmap with detailed steps
+- `docs/testing-guide.md` - Manual testing guide with step-by-step procedures
 - `docs/SETUP.md` - Setup and development guide
 
 ### Backend
@@ -467,3 +483,17 @@ Manual testing for V1:
 ## License
 
 MIT License - See `LICENSE` file
+
+## Forbidden Behavior (MANDATORY)
+
+Claude Code must NEVER:
+- Attempt to run native desktop (Linux/macOS/Windows) builds
+- Attempt to run Android or iOS builds
+- Attempt to use `flutter devices`
+- Attempt to auto-launch any browser
+- Attempt to generate or modify v2optional features
+- Attempt to create automated UI or E2E tests
+- Attempt to bypass backend-authoritative rules
+
+
+All testing is manual unless otherwise specified. Claude Code must NOT attempt automated UI testing or automated browser interactions.
