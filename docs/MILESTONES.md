@@ -122,70 +122,23 @@ READ → ANALYZE → PLAN → CODE → BACKTEST → FIX → COMMIT → PUSH → 
 - Documentation: Updated app/README.md
 - **Total**: 741 lines of clean, documented code
 
----
-
-## ⏳ Remaining Milestones (9-12)
-
-### MILESTONE 9: Flutter Logs Feature
-
-**Goal**: Implement logs list, create, and edit functionality in Flutter app.
-
-**Requirements** (from v1Spez.md):
-- Display list of logs for current user
-- Create new log (name, type: Couple/Family/Solo)
-- Edit existing log
-- Delete log with confirmation
-- Navigate to entries when log is selected
-
-**Implementation Steps**:
-
-1. **Create Logs API Client** (`app/lib/data/api/logs_api_client.dart`)
-   - Methods: fetchLogs(), fetchLog(id), createLog(name, type), updateLog(id, data), deleteLog(id)
-   - Use dio with Supabase Auth headers
-   - Base URL from environment variable
-
-2. **Update Log Model** (`app/lib/data/models/log.dart`)
-   - Add fromJson/toJson
-   - Add fields: id, user_id, name, type, created_at, updated_at
-
-3. **Create Logs Repository** (`app/lib/features/logs/data/logs_repository.dart`)
-   - Wrapper around API client
-   - Error handling
-
-4. **Create Logs Providers** (`app/lib/features/logs/providers/logs_providers.dart`)
-   - logsRepositoryProvider - provides logs repository
-   - logsListProvider - FutureProvider or AsyncNotifierProvider for logs list
-   - createLogProvider - handles log creation
-   - updateLogProvider - handles log updates
-   - deleteLogProvider - handles log deletion
-
-5. **Create Logs UI Widgets**:
-   - `widgets/log_card.dart` - Display single log card
-   - `widgets/log_list.dart` - Display list of logs
-   - `widgets/create_log_dialog.dart` - Dialog for creating new log
-   - `widgets/edit_log_dialog.dart` - Dialog for editing log
-
-6. **Update LogsScreen** (`app/lib/features/logs/logs_screen.dart`)
-   - Display logs list using logsListProvider
-   - FloatingActionButton to create new log
-   - Tap on log → navigate to entries list
-   - Long press → edit/delete options
-   - Handle loading and error states
-
-7. **Update Router** (`app/lib/core/routing/router.dart`)
-   - Add route: /logs/:logId/entries
-   - Pass logId to entries screen
-
-8. **Backtest**:
-   - ✅ Verify all CRUD operations work
-   - ✅ Check RLS policies enforce user ownership
-   - ✅ Test navigation flow (logs → entries)
-   - ✅ Verify loading/error states
-   - ✅ Check against v1Spez.md requirements
-
-9. **Commit**: `feat(milestone-9): implemented Flutter Logs feature, backtested`
+### MILESTONE 9: Flutter Logs Feature ✅
+**Commit**: `c6b6c45`
+- Data layer: logs_api_client.dart (183 lines - Dio HTTP client)
+- Repository: logs_repository.dart (95 lines - validation and error handling)
+- State management: logs_providers.dart (69 lines - Riverpod)
+- UI widgets: log_card.dart (155 lines), log_list.dart (136 lines), create_log_dialog.dart (158 lines), edit_log_dialog.dart (182 lines)
+- Main screen: logs_screen.dart (144 lines - full CRUD implementation)
+- Placeholder: entries_screen.dart (55 lines - for MILESTONE 10)
+- Routing: Updated router.dart (69 lines - added /logs/:logId/entries route)
+- Config: Updated main.dart (67 lines - Supabase credentials)
+- **Total**: 1,313 lines of clean, documented Flutter code
+- **Features**: Complete CRUD for logs, backend integration, error handling, loading states
+- **Backtest**: All v1Spez.md requirements met ✅
 
 ---
+
+## ⏳ Remaining Milestones (10-12)
 
 ### MILESTONE 10: Flutter Entries Feature
 
@@ -484,9 +437,9 @@ Never push to main/master without explicit permission.
 - [x] MILESTONE 6: Worker Functions
 - [x] MILESTONE 7: Smart Pages Engine
 - [x] MILESTONE 8: Flutter Auth UI
-- [ ] MILESTONE 9: Flutter Logs Feature
+- [x] MILESTONE 9: Flutter Logs Feature
 - [ ] MILESTONE 10: Flutter Entries Feature
 - [ ] MILESTONE 11: Flipbook Viewer
 - [ ] MILESTONE 12: Integration Testing
 
-**Current Status**: 8/12 milestones completed (66.7%)
+**Current Status**: 9/12 milestones completed (75.0%)
