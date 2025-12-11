@@ -72,8 +72,8 @@ SELECT
                 'width', p.width,
                 'height', p.height,
                 'dominant_colors', p.dominant_colors
-            ) ORDER BY p.display_order
-        ) FILTER (WHERE p.id IS NOT NULL),
+            )
+        ) FILTER (WHERE p.id IS NOT NULL) ORDER BY p.display_order,
         '[]'::json
     ) AS photos,
     COALESCE(
