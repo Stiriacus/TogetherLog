@@ -10,6 +10,7 @@ import '../../features/entries/entries_screen.dart';
 import '../../features/entries/entry_create_screen.dart';
 import '../../features/entries/entry_detail_screen.dart';
 import '../../features/entries/entry_edit_screen.dart';
+import '../../features/flipbook/flipbook_viewer.dart';
 
 /// Router provider for the app
 final routerProvider = Provider<GoRouter>((ref) {
@@ -96,7 +97,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      // Flipbook routes will be added in MILESTONE 11
+      // Flipbook route
+      GoRoute(
+        path: '/logs/:logId/flipbook',
+        name: 'flipbook',
+        builder: (context, state) {
+          final logId = state.pathParameters['logId']!;
+          final logName = state.uri.queryParameters['logName'] ?? 'Flipbook';
+          return FlipbookViewer(
+            logId: logId,
+            logName: logName,
+          );
+        },
+      ),
     ],
   );
 });

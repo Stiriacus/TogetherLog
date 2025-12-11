@@ -72,8 +72,8 @@ cd app
 # Get dependencies
 flutter pub get
 
-# Run on web (development)
-flutter run -d chrome
+# Run on web (development because chrome is not installed -> use brave with this command)
+CHROME_EXECUTABLE=$(which brave-browser || which brave) flutter run -d chrome
 
 # Run on Android device
 flutter devices  # List available devices
@@ -91,18 +91,70 @@ flutter clean && flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-### Platform Testing Constraints
+### Platform Testing Constraints (MANDATORY)
 
-**CRITICAL: Claude Code must ONLY test and run the Web version of the Flutter app.**
+Claude Code must ONLY run and test the Flutter **Web** application.
 
-- **✅ USE**: `flutter run -d chrome`
-- **❌ DO NOT** test Windows builds
-- **❌ DO NOT** test macOS builds
-- **❌ DO NOT** test Linux builds
-- **❌ DO NOT** test Web Server unless specifically instructed
-- **❌ DO NOT** test Android builds
+Allowed platform:
+- **Web (Chrome)** via Brave executable
 
-**Web (Chrome) is the ONLY supported and required platform for V1 testing.**
+Prohibited platforms (never use under any circumstances):
+- Windows
+- macOS
+- Linux desktop
+- Android
+- iOS
+- Web Server device (unless explicitly instructed)
+
+Claude Code must NEVER attempt to:
+- Select or use any non-Web device
+- Run `flutter devices`
+- Run desktop, mobile, or server builds
+
+Web is the ONLY supported runtime for TogetherLog during V1 development.
+
+---
+
+### Flutter Web Execution Rule (MANDATORY)
+
+TogetherLog MUST always be run using the Brave-based Chrome command:
+
+    CHROME_EXECUTABLE=$(which brave-browser || which brave) flutter run -d chrome
+
+Claude Code must NEVER use:
+
+    flutter run -d chrome
+
+or any other `flutter run -d <device>` variant.
+
+This Brave-based command is the ONLY valid and authorized way to run the Flutter app during development.
+
+Claude Code must apply this rule consistently:
+- For all run/hot-reload/debug commands  
+- For all backtesting sequences  
+- For all workflow examples or instructions  
+- Without checking for Chrome availability  
+- Without attempting device detection or fallback logic  
+
+All planning, explanations, generated commands, and milestone execution MUST use **only** the Brave Web command above.
+
+
+### Flutter Color API Rule (MANDATORY)
+
+TogetherLog uses the modern Flutter Material 3 color API for all transparency and channel adjustments.
+
+Claude Code must ALWAYS use the following pattern for opacity:
+    color.withValues(alpha: X)
+
+Claude Code must NEVER generate:
+    color.withOpacity(X)
+
+If an existing file contains withOpacity(), Claude Code should migrate it to withValues(alpha: …) when modifying that file, preserving the same alpha value.
+
+All new Flutter code, UI components, widgets, themes, and styles MUST use withValues() exclusively.
+
+This rule is mandatory for consistency across the entire Flutter codebase.
+
 
 ### Backend (Supabase)
 
@@ -204,11 +256,11 @@ app/lib/
     │   └── widgets/
     │       ├── login_form.dart
     │       └── signup_form.dart
-    ├── logs/                   #   MILESTONE 9 (Next)
+    ├── logs/                   
     │   └── logs_screen.dart    # Placeholder, needs implementation
-    ├── entries/                #   MILESTONE 10
+    ├── entries/                
     │   └── entry_create_screen.dart  # Placeholder
-    └── flipbook/               #   MILESTONE 11
+    └── flipbook/               
         └── flipbook_viewer.dart      # Placeholder
 ```
 
@@ -342,29 +394,6 @@ Manual testing for V1:
 - **Supabase Edge Functions** - TypeScript/Deno serverless functions
 - **OpenStreetMap/Nominatim** - Reverse geocoding
 
-## Current Project Status
-
-### Completed (8/12 milestones)
--   MILESTONE 0-2: Project foundation, Flutter init, backend structure
--   MILESTONE 3: Database schema with RLS policies
--   MILESTONE 4: Logs REST API
--   MILESTONE 5: Entries REST API
--   MILESTONE 6: Worker functions (geocoding, photo processing, color extraction)
--   MILESTONE 7: Smart Pages Engine (core feature)
--   MILESTONE 8: Flutter Auth UI (login, signup, auth guards)
-
-### Next Up
--   **MILESTONE 9: Flutter Logs Feature** ← **YOU ARE HERE**
-  - Implement logs list, create, edit, delete UI
-  - Connect to `/api-logs` endpoints
-  - Use Riverpod for state management
-  - See `docs/MILESTONES.md` for detailed steps
-
-### Remaining
--   MILESTONE 10: Flutter Entries Feature (photo upload, tags, location)
--   MILESTONE 11: Flipbook Viewer (3D page-turn animation, Smart Page rendering)
--   MILESTONE 12: Integration testing and validation
-
 ## Common Pitfalls to Avoid
 
 ### 1. Smart Page Logic in Flutter
@@ -427,24 +456,6 @@ Manual testing for V1:
 - `app/pubspec.yaml` - Dependencies list
 - `app/lib/main.dart` - App entry point with Supabase initialization
 - `app/lib/core/routing/router.dart` - Routing configuration
-
-## Quick Reference for Next Milestone (9)
-
-When implementing MILESTONE 9 (Flutter Logs Feature):
-
-1. Create `app/lib/data/api/logs_api_client.dart` - dio HTTP client calling `/api-logs`
-2. Expand `app/lib/data/models/log.dart` - add fromJson/toJson
-3. Create `app/lib/features/logs/data/logs_repository.dart` - repository pattern
-4. Create `app/lib/features/logs/providers/logs_providers.dart` - Riverpod providers
-5. Create UI widgets in `app/lib/features/logs/widgets/`:
-   - `log_card.dart` - Display single log
-   - `log_list.dart` - Display logs list
-   - `create_log_dialog.dart` - Create log dialog
-   - `edit_log_dialog.dart` - Edit log dialog
-6. Update `app/lib/features/logs/logs_screen.dart` - Complete implementation
-7. Add route `/logs/:logId/entries` in router for navigation
-
-See `docs/MILESTONES.md` section "MILESTONE 9" for complete implementation steps and backtest checklist.
 
 ## Performance Targets
 
