@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["deno.window"]
+  },
+  "lint": {
+    "files": {
+      "exclude": ["_shared"]
+    }
+  },
+  "fmt": {
+    "files": {
+      "exclude": ["_shared"]
+    },
+    "options": {
+      "semiColons": false,
+      "singleQuote": true
+    }
+  }
+}
