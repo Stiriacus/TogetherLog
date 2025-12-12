@@ -245,162 +245,34 @@ READ → ANALYZE → PLAN → CODE → BACKTEST → FIX → COMMIT → PUSH → 
 
 ---
 
-## ⏳ Remaining Milestones (11-12)
+### MILESTONE 11: Flipbook Viewer ✅
+**Commit**: `1eb2bd9`
 
-### MILESTONE 11: Flipbook Viewer
+**What was implemented:**
+- 3D page-turn flipbook viewer using page_flip package
+- Smart Page renderer with three layout types (single_full, grid_2x2, grid_3x2)
+- Color theme application from backend-computed values
+- Sprinkles overlay for decorative icons
+- Swipe/drag gestures for navigation (touch and mouse)
+- Forward/backward page navigation controls
+- Chronological entry display within flipbook
 
-**Goal**: Implement 3D page-turn flipbook viewer for entries.
+**Architecture compliance:**
+- ✅ Frontend lean: No layout computation - only renders pre-computed Smart Page data
+- ✅ Backend authoritative: All Smart Page fields (layout_type, color_theme, sprinkles) come from backend
+- ✅ Clean architecture: Providers → Repository → UI widgets pattern maintained
 
-**Requirements** (from v1Spez.md section 7):
-- Create new entry with photos
-- Upload photos to Supabase Storage
-- Add/edit highlight text
-- Select tags from predefined set
-- Edit/override location
-- View entry details
-- Edit existing entry
-- Delete entry
-
-**Implementation Steps**:
-
-1. **Create Entries API Client** (`app/lib/data/api/entries_api_client.dart`)
-   - Methods: fetchEntries(logId), fetchEntry(id), createEntry(logId, data), updateEntry(id, data), deleteEntry(id)
-   - fetchTags() - get all tags
-
-2. **Create Storage API Client** (`app/lib/data/api/storage_api_client.dart`)
-   - uploadPhoto(File, entryId) - upload to Supabase Storage
-   - getPhotoUrl(path) - get public URL
-   - deletePhoto(path)
-
-3. **Update Entry Model** (`app/lib/data/models/entry.dart`)
-   - Complete fromJson/toJson
-   - All fields from v1Spez.md section 3.1
-
-4. **Create Tag Model** (`app/lib/data/models/tag.dart`)
-   - id, name, category, icon (optional)
-
-5. **Create Photo Model** (`app/lib/data/models/photo.dart`)
-   - id, entry_id, url, thumbnail_url, display_order, metadata
-
-6. **Create Entries Providers** (`app/lib/features/entries/providers/entries_providers.dart`)
-   - entriesRepositoryProvider
-   - entriesListProvider(logId) - fetch entries for a log
-   - entryDetailProvider(entryId) - fetch single entry
-   - tagsProvider - fetch all tags
-   - createEntryProvider
-   - updateEntryProvider
-
-7. **Create Entries UI Screens**:
-   - `entries_list_screen.dart` - List entries for a log (chronological)
-   - `entry_detail_screen.dart` - View entry details (photos, text, tags, location)
-   - Update `entry_create_screen.dart` - Complete implementation
-   - `entry_edit_screen.dart` - Edit existing entry
-
-8. **Create Entry Widgets**:
-   - `widgets/entry_card.dart` - Entry preview card
-   - `widgets/photo_picker.dart` - Multi-photo picker with image_picker
-   - `widgets/tag_selector.dart` - Tag selection chips
-   - `widgets/location_editor.dart` - Edit location with override option
-   - `widgets/highlight_text_field.dart` - Text input for highlight
-
-9. **Photo Upload Flow**:
-   - User selects photos from device
-   - Upload to Supabase Storage (photos bucket)
-   - Get photo URLs
-   - Create entry with photo references
-   - Trigger backend workers via API call
-
-10. **Update Router**:
-    - /logs/:logId/entries - entries list
-    - /logs/:logId/entries/create - create entry
-    - /entries/:entryId - entry detail
-    - /entries/:entryId/edit - edit entry
-
-11. **Backtest**:
-    - ✅ Test photo upload flow
-    - ✅ Verify entry creation with all fields
-    - ✅ Test tag selection
-    - ✅ Test location editing
-    - ✅ Check worker triggering
-    - ✅ Verify against v1Spez.md section 3
-
-12. **Commit**: `feat(milestone-10): implemented Flutter Entries feature with photo upload, backtested`
+**Backtest results:**
+- ✅ All three layout types render correctly based on photo count
+- ✅ Color themes apply properly based on tags
+- ✅ Page-turn animation is smooth (60fps target)
+- ✅ Gestures work on Web (click/drag)
+- ✅ Entries display in chronological order
+- ✅ Sprinkles display on pages with appropriate tags
 
 ---
 
-### MILESTONE 11: Flipbook Viewer
-
-**Goal**: Implement 3D page-turn flipbook viewer for entries.
-
-**Requirements** (from v1Spez.md section 7):
-- Show all entries of a log in chronological order
-- Each entry rendered as full page using Smart Page definition
-- 3D-like page-turn animation (use page_flip package)
-- Touch/swipe gestures (Android)
-- Mouse drag/click (Web)
-- Forward/backward navigation
-- Smooth transitions
-- Good performance on Web + Android
-
-**Implementation Steps**:
-
-1. **Create Smart Page Renderer** (`app/lib/features/flipbook/widgets/smart_page_renderer.dart`)
-   - Takes entry with Smart Page data (page_layout_type, color_theme, photos, etc.)
-   - Renders page based on layout type:
-     - single_full → Hero layout with large photo
-     - grid_2x2 → 2x2 grid layout
-     - grid_3x2 → 3x2 grid layout (max 6 photos)
-   - Applies color theme from backend
-   - Displays sprinkles (decorative icons)
-   - Shows highlight text, location, date
-
-2. **Create Theme Builder** (`app/lib/core/theme/smart_page_theme.dart`)
-   - Color theme mappings (warm_red, earth_green, ocean_blue, etc.)
-   - Returns ColorScheme for each theme
-   - Used by smart_page_renderer
-
-3. **Create Layout Widgets** (`app/lib/features/flipbook/widgets/layouts/`)
-   - `single_full_layout.dart` - Hero layout
-   - `grid_2x2_layout.dart` - 2x2 grid
-   - `grid_3x2_layout.dart` - 3x2 grid
-   - Each layout widget takes photos, text, location, theme
-
-4. **Create Sprinkles Widget** (`app/lib/features/flipbook/widgets/sprinkles_overlay.dart`)
-   - Renders decorative icons from sprinkles array
-   - Positioned strategically on page
-
-5. **Update FlipbookViewer** (`app/lib/features/flipbook/flipbook_viewer.dart`)
-   - Use page_flip package for 3D animation
-   - Fetch entries for log (sorted chronologically)
-   - Map each entry to SmartPageRenderer
-   - Implement gesture controls:
-     - Swipe left/right (Android)
-     - Click/drag (Web)
-   - Add navigation controls (arrows, page numbers)
-
-6. **Create Flipbook Providers** (`app/lib/features/flipbook/providers/flipbook_providers.dart`)
-   - flipbookEntriesProvider(logId) - fetch entries for flipbook
-   - currentPageProvider - track current page index
-
-7. **Update Router**:
-   - /logs/:logId/flipbook - flipbook viewer
-
-8. **Add Navigation from Logs Screen**:
-   - Add "View Flipbook" button on logs list
-   - Navigate to /logs/:logId/flipbook
-
-9. **Backtest**:
-   - ✅ Test all layout types render correctly
-   - ✅ Verify color themes apply properly
-   - ✅ Test page-turn animation smoothness
-   - ✅ Test on Web (Chrome)
-   - ✅ Check gestures work (swipe, click)
-   - ✅ Verify entries show in chronological order
-   - ✅ Check against v1Spez.md section 7
-
-10. **Commit**: `feat(milestone-11): implemented Flipbook viewer with 3D page-turn animation, backtested`
-
----
+## ⏳ Remaining Milestones
 
 ### MILESTONE 12: Integration Testing & Final Validation
 
@@ -546,7 +418,7 @@ Never push to main/master without explicit permission.
 - [x] MILESTONE 8: Flutter Auth UI
 - [x] MILESTONE 9: Flutter Logs Feature
 - [x] MILESTONE 10: Flutter Entries Feature
-- [ ] MILESTONE 11: Flipbook Viewer
+- [x] MILESTONE 11: Flipbook Viewer
 - [ ] MILESTONE 12: Integration Testing
 
-**Current Status**: 10/12 milestones completed (83.3%)
+**Current Status**: 11/12 milestones completed (91.7%)

@@ -124,7 +124,7 @@ This rule is mandatory for consistency across the entire Flutter codebase.
 
 ### Common Development Commands
 
-### Flutter App
+#### Flutter App
 
 ```bash
 # Navigate to app directory
@@ -133,25 +133,23 @@ cd app
 # Get dependencies
 flutter pub get
 
-# Run on web (development because chrome is not installed -> use brave with this command)
+# Run on web (MANDATORY - use Brave browser)
 CHROME_EXECUTABLE=$(which brave-browser || which brave) flutter run -d chrome
 
 # Build for production
 flutter build web --release
-flutter build apk --release
-flutter build appbundle --release
 
 # Clean build cache
 flutter clean && flutter pub get
 
 # Run code generation (Riverpod)
 dart run build_runner build --delete-conflicting-outputs
+
+# Check for analyzer issues
+flutter analyze
 ```
 
-
-
-
-### Backend (Supabase)
+#### Backend (Supabase)
 
 ```bash
 # Navigate to project root
@@ -180,19 +178,14 @@ supabase start
 supabase stop
 ```
 
-### Git Workflow
+#### Git Workflow
 
 ```bash
 # All development happens on this branch:
 git checkout claude/implement-togetherlog-milestones-01VZCHt2jn2mHfHykS74GcA3
 
 # Commit format for milestones:
-git commit -m "feat(milestone-X): brief description, backtested
-
-Detailed description:
-- What was implemented
-- Architecture compliance
-- Backtest results
+git commit -m "feat(milestone-X): brief description, backtested"
 
 # Push to branch
 git push origin claude/implement-togetherlog-milestones-01VZCHt2jn2mHfHykS74GcA3
